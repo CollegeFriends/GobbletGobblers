@@ -2,11 +2,11 @@
 import os, sys, unittest
 
 class GobbletGobblers():
-    def __init__(self):
-        print("Common Field GAME!")
+    def __init__(self,enbaleRender=True):                
         self.__field = [0] * 9 
         self.__pieces = [[0,0,1,1,2,2],[0,0,1,1,2,2]]
         self.__winner = None        
+        self.__enableRender = enbaleRender
 
     def getField(self):
         return self.__field.copy()
@@ -62,7 +62,7 @@ class GobbletGobblers():
         if side not in [0,1]:
             print("sideで[0,1]以外を指定した [{}]".format(side))
             return None       
-        return self.__pieces[side]
+        return self.__pieces[side].copy()
 
     def putPiece(self,side,size,pos):        
         # 試合中であることの確認
@@ -141,8 +141,6 @@ class GobbletGobblers():
         else:
             size = 0
         
-        print(size)
-
         # fromPosのコマをtoPosにおけるかの確認
         self.chk_pos(size,toPos)
         
@@ -174,8 +172,8 @@ class GobbletGobblers():
         return (pos_state & chk_b) == 0
 
     def chk_move(self,side,pos):
-        # 指定したposの最大のコマが自分のコマかどうかを確認する
-        pos_state = self.__field[pos]
+        # 指定したposの最大のコマが自分のコマかどうかを確認する        
+        return side == self.getOwner(pos)
         
     def size2state(self,side,size):        
         if side == 0:
@@ -222,11 +220,13 @@ class GobbletGobblers():
 
         if self.__winner == None:
             # self.render('owner')
-            print("Continue...")
+            if self.__enableRender:
+                print("Continue...")
             return False
         else:
-            # self.render('owner')            
-            print("Winner is side {}".format(self.__winner))
+            # self.render('owner') 
+            if self.__enableRender:           
+                print("Winner is side {}".format(self.__winner))
             return True
 
     def isEnd(self):
@@ -237,6 +237,27 @@ class GobbletGobblers():
             print("まだ試合終了していません")
             return -1
         return self.__winner
+
+    def getOwnersList(self):
+        return_list = []
+        for i in range(9):
+            return_list.append(self.getOwner(i))
+        return return_list
+
+    def getPieceSize(self,pos):
+        # 指定した場所の一番大きなコマのサイズを返す
+        # ただし、置いていないところは-1を返す
+        state = self.__field[pos]
+
+        chk_b = 0b100100
+        if (state & 0b100100) != 0:
+            return 2
+        elif (state & 0b010010) != 0:
+            return 1
+        elif (state & 0b001001) != 0:
+            return 0
+        else:
+            return -1
 
 class GobbletGobblersTest(unittest.TestCase):
     CLS_VAL='none'
