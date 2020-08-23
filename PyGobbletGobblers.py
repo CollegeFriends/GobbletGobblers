@@ -56,6 +56,7 @@ class GobbletGobblers():
                 print("----------")            
             for i in [0,1]:                        
                 print("player {} : {}".format(i,self.getPieces(i)))    
+
     def getPieces(self,side):
         # 指定サイドのエラーチェック
         if side not in [0,1]:
@@ -230,6 +231,13 @@ class GobbletGobblers():
 
     def isEnd(self):
         return self.__winner is not None
+
+    def getWinner(self):
+        if not self.isEnd():
+            print("まだ試合終了していません")
+            return -1
+        return self.__winner
+
 class GobbletGobblersTest(unittest.TestCase):
     CLS_VAL='none'
 
@@ -292,11 +300,7 @@ class GobbletGobblersTest(unittest.TestCase):
         self.game.putPiece(0,1,2)
         self.game.judge()
 
-    def getWinner(self):
-        if not self.isEnd():
-            print("まだ試合終了していません")
-            return -1
-        return self.__winner
+    
 if __name__ == '__main__':
     unittest.main()
 
